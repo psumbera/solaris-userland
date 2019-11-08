@@ -31,12 +31,12 @@ include ../../../make-rules/cargo-vendored.mk
 GCC_ROOT =      /usr/gcc/9
 
 COMPONENT_NAME =	rustc
-COMPONENT_VERSION =	1.35.0
+COMPONENT_VERSION =	1.37.0
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_PROJECT_URL =	http://www.rust-lang.org/
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:169756df2298957bcf02da6a612996c24a51b9ac3b23409e6507d69eb2e6f523
+    sha256:10abffac50a729cf74cef6dd03193a2f4647541bd19ee9281be9e5b12ca8cdfd
 COMPONENT_ARCHIVE_URL =	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL =	$(COMPONENT_ARCHIVE_URL).asc
 
@@ -46,7 +46,7 @@ COMPONENT_ANITYA_ID =	7635
 TPNO =			52475
 
 COMPONENT_ARCHIVE_HASH_crates = \
-    sha256:bbca78f09a3f9675463416405ab851b65a981989c5fcc8217ed0da97eaaca806
+    sha256:9ea5d9c73d0a8eeb7a3a897994043511db62ed2d2720f504a9b936013269b19c
 
 PKG_VARS += RUST_PLATFORM
 
@@ -55,7 +55,7 @@ include $(WS_MAKE_RULES)/common.mk
 $(SOURCE_DIR_crates)/.patched: PATCH_LEVEL=0
 
 # Everything expects GNU utilities, so make sure those are preferred.
-PATH =			/usr/gnu/bin:/usr/bin
+PATH = $(PATH_CARGO_VENDOR):$(PATH_RUST):/usr/gnu/bin:/usr/bin
 
 # LD_B_DIRECT breaks the build.
 LD_B_DIRECT =
@@ -64,9 +64,10 @@ $(MANIFEST_BASE)-%.mogrified: RUST_PLATFORM = $(MACH64:amd64=x86_64)-sun-solaris
 
 # The configure Rust uses isn't autoconf; it's hand-rolled, and doesn't
 # recognize all the autoconf options, so we start from scratch.
-CONFIGURE_OPTIONS =	--prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS +=	--default-linker=gcc
+CONFIGURE_OPTIONS =	--default-linker=gcc
 CONFIGURE_OPTIONS +=	--enable-local-rust
+#CONFIGURE_OPTIONS +=	--enable-llvm-link-shared
+#CONFIGURE_OPTIONS +=	--llvm-root=/usr
 
 COMPONENT_PRE_BUILD_ACTION = $(VENDORED_SOURCES_ENFORCE)
 
