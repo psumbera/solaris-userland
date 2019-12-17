@@ -26,17 +26,16 @@
 BUILD_BITS =	64
 COMPILER =	gcc
 include ../../../make-rules/shared-macros.mk
-include ../../../make-rules/cargo-vendored.mk
 
 GCC_ROOT =      /usr/gcc/9
 
 COMPONENT_NAME =	rustc
-COMPONENT_VERSION =	1.37.0
+COMPONENT_VERSION =	1.38.0
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_PROJECT_URL =	http://www.rust-lang.org/
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:10abffac50a729cf74cef6dd03193a2f4647541bd19ee9281be9e5b12ca8cdfd
+    sha256:3a7991aa4cb44ef941d71636e45a95468b520dc6fc7cf725364925bd3e3d3a34
 COMPONENT_ARCHIVE_URL =	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL =	$(COMPONENT_ARCHIVE_URL).asc
 
@@ -45,8 +44,17 @@ COMPONENT_ANITYA_ID =	7635
 
 TPNO =			52475
 
-COMPONENT_ARCHIVE_HASH_crates = \
-    sha256:9ea5d9c73d0a8eeb7a3a897994043511db62ed2d2720f504a9b936013269b19c
+VENDORED_SOURCES_NAME = $(COMPONENT_SRC)/vendor
+VENDORED_SOURCES = $(COMPONENT_DIR)/$(VENDORED_SOURCES_NAME)
+
+# Pre-build action which forces Cargo project to use vendored crates and
+# avoids downloading them from internet.
+VENDORED_SOURCES_ENFORCE = \
+        cd $(BUILD_DIR); mkdir -p .cargo; \
+        echo "[source.crates-io]" > .cargo/config; \
+        echo "replace-with = \"vendored-sources\"" >> .cargo/config; \
+        echo "[source.vendored-sources]" >> .cargo/config; \
+        echo "directory = \"$(VENDORED_SOURCES)\"" >> .cargo/config;
 
 PKG_VARS += RUST_PLATFORM
 
@@ -55,7 +63,7 @@ include $(WS_MAKE_RULES)/common.mk
 $(SOURCE_DIR_crates)/.patched: PATCH_LEVEL=0
 
 # Everything expects GNU utilities, so make sure those are preferred.
-PATH = $(PATH_CARGO_VENDOR):$(PATH_RUST):/usr/gnu/bin:/usr/bin
+PATH = $(COMPONENT_DIR)/epoll:$(PATH_CARGO_VENDOR):$(PATH_RUST):/usr/gnu/bin:/usr/bin
 
 # LD_B_DIRECT breaks the build.
 LD_B_DIRECT =
@@ -70,6 +78,16 @@ CONFIGURE_OPTIONS +=	--enable-local-rust
 #CONFIGURE_OPTIONS +=	--llvm-root=/usr
 
 COMPONENT_PRE_BUILD_ACTION = $(VENDORED_SOURCES_ENFORCE)
+
+COMPONENT_PRE_CONFIGURE_ACTION += \
+       ( cd $(COMPONENT_DIR)/epoll; \
+       $(GCC_ROOT)/bin/gcc -shared -DDEBUG=0 -o libepoll.so -fPIC -c epoll.c ; \
+       echo "\#!/bin/sh" > gcc ; \
+       echo "$(GCC_ROOT)/bin/gcc -L$(COMPONENT_DIR)/epoll -lepoll \$$@" >> gcc ; \
+       chmod a+x gcc ) ;
+
+CLEAN_PATHS += epoll/libepoll.so
+CLEAN_PATHS += epoll/gcc
 
 # Put the bits cargo downloads in a private directory.  This could be cached
 # somewhere more permanent, but it's important to make sure that a person's
