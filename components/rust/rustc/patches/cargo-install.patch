@@ -4,14 +4,14 @@ Part of Solaris distribution configuration.
 
 --- a/config.toml.example
 +++ b/config.toml.example
-@@ -173,11 +173,11 @@
+@@ -182,11 +182,11 @@
  # but also tools such as Cargo. This will also produce "combined installers"
  # which are used to install Rust and Cargo together. This is disabled by
  # default.
 -#extended = false
 +extended = true
  
- # Installs chosen set of extended tools if enables. By default builds all.
+ # Installs chosen set of extended tools if enabled. By default builds all.
  # If chosen tool failed to build the installation fails.
 -#tools = ["cargo", "rls", "clippy", "rustfmt", "analysis", "src"]
 +tools = ["cargo"]
