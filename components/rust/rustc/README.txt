@@ -20,7 +20,7 @@ point build to required version:
 
 cd components/rust/rustc
 
-gmake install PATH_CARGO_VENDOR=/builds/cargo-vendor-0.1.23/bin/ PATH_RUST=/builds/rustc-1.36.0/bin/ INTERNAL_ARCHIVE_MIRROR=
+gmake install PATH_RUST=/builds/rustc-1.45.0/bin/ INTERNAL_ARCHIVE_MIRROR=
 
 The resulting binaries should be installed in following subdirectory:
 
