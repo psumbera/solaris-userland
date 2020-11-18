@@ -1,3 +1,5 @@
+https://github.com/rust-lang/rust/issues/78406
+
 --- rustc-1.47.0-src/library/std/src/os/linux/fs.rs.orig	2020-11-11 13:29:19.986982610 +0000
 +++ rustc-1.47.0-src/library/std/src/os/linux/fs.rs	2020-11-11 13:30:13.510161420 +0000
 @@ -18,7 +18,7 @@
