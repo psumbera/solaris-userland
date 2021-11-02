@@ -27,15 +27,15 @@ BUILD_BITS =	64
 COMPILER =	gcc
 include ../../../make-rules/shared-macros.mk
 
-GCC_ROOT =      /usr/gcc/9
+GCC_ROOT =      /usr/gcc/11
 
 COMPONENT_NAME =	rustc
-COMPONENT_VERSION =	1.55.0
+COMPONENT_VERSION =	1.56.1
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_PROJECT_URL =	http://www.rust-lang.org/
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:aec85a7c1f40b7a40818a58ae13632f8a12cfaa4d3e2a10957d0e9d16dfdd556
+    sha256:61fdcc8bc2530ee18f91318347e09b7cc07e9ca04b1c627c135ecc8dcb8f2ac5
 COMPONENT_ARCHIVE_URL =	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL =	$(COMPONENT_ARCHIVE_URL).asc
 
