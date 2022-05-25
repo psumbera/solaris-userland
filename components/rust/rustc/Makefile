@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2018, 2021, Oracle and/or its affiliates.
+# Copyright (c) 2018, 2022, Oracle and/or its affiliates.
 #
 
 BUILD_BITS =	64
@@ -30,12 +30,12 @@ include ../../../make-rules/shared-macros.mk
 GCC_ROOT =      /usr/gcc/11
 
 COMPONENT_NAME =	rustc
-COMPONENT_VERSION =	1.60.0
+COMPONENT_VERSION =	1.61.0
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_PROJECT_URL =	http://www.rust-lang.org/
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:a025876deccbcb3f288d8e02623ea321f94623f31305d3c5c6f17855bb9685db
+    sha256:a63305a3ad734f170746b337a5e3d07ccaa7aa8f253dc52336b44c0a3b549d7b
 COMPONENT_ARCHIVE_URL =	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL =	$(COMPONENT_ARCHIVE_URL).asc
 
@@ -95,6 +95,12 @@ CLEAN_PATHS += epoll/gcc
 COMPONENT_BUILD_ENV +=	CARGO_HOME=$(BUILD_DIR)/.cargo
 COMPONENT_INSTALL_ENV +=	CARGO_HOME=$(BUILD_DIR)/.cargo
 COMPONENT_TEST_ENV +=	CARGO_HOME=$(BUILD_DIR)/.cargo
+
+# Use OpenSSL 3
+COMPONENT_BUILD_ENV +=	OPENSSL_LIB_DIR=/usr/openssl/3/lib/64
+COMPONENT_BUILD_ENV +=	OPENSSL_INCLUDE_DIR=/usr/openssl/3/include
+COMPONENT_INSTALL_ENV += OPENSSL_LIB_DIR=/usr/openssl/3/lib/64
+COMPONENT_INSTALL_ENV += OPENSSL_INCLUDE_DIR=/usr/openssl/3/include
 
 # Rust library names contain hash which differs between intel and sparc.
 # Therefore library list need to be created to be included into p5m file.
