@@ -1,28 +1,13 @@
 https://github.com/rust-lang/rust/issues/96054
 
---- rustc-1.60.0-src/src/llvm-project/llvm/CMakeLists.txt.orig	2022-04-14 16:59:58.027479056 +0000
-+++ rustc-1.60.0-src/src/llvm-project/llvm/CMakeLists.txt	2022-04-14 17:01:57.044255205 +0000
-@@ -1241,23 +1241,6 @@
-   include(InstallRequiredSystemLibraries)
- endif()
+--- rustc-1.65.0-src/src/llvm-project/llvm/CMakeLists.txt
++++ rustc-1.65.0-src/src/llvm-project/llvm/CMakeLists.txt
+@@ -651,7 +651,7 @@
  
--if (LLVM_INCLUDE_BENCHMARKS)
--  # Override benchmark defaults so that when the library itself is updated these
--  # modifications are not lost.
--  set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "Disable benchmark testing" FORCE)
--  set(BENCHMARK_ENABLE_EXCEPTIONS OFF CACHE BOOL "Disable benchmark exceptions" FORCE)
--  set(BENCHMARK_ENABLE_INSTALL OFF CACHE BOOL "Don't install benchmark" FORCE)
--  set(BENCHMARK_DOWNLOAD_DEPENDENCIES OFF CACHE BOOL "Don't download dependencies" FORCE)
--  set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE BOOL "Disable Google Test in benchmark" FORCE)
--  set(BENCHMARK_ENABLE_WERROR ${LLVM_ENABLE_WERROR} CACHE BOOL 
--    "Handle -Werror for Google Benchmark based on LLVM_ENABLE_WERROR" FORCE)
--  # Since LLVM requires C++11 it is safe to assume that std::regex is available.
--  set(HAVE_STD_REGEX ON CACHE BOOL "OK" FORCE)
--  add_subdirectory(${LLVM_THIRD_PARTY_DIR}/benchmark 
--    ${CMAKE_CURRENT_BINARY_DIR}/third-party/benchmark)
--  add_subdirectory(benchmarks)
--endif()
--
- if (LLVM_INCLUDE_UTILS AND LLVM_INCLUDE_TOOLS)
-   add_subdirectory(utils/llvm-locstats)
- endif()
+ option(LLVM_BUILD_BENCHMARKS "Add LLVM benchmark targets to the list of default
+ targets. If OFF, benchmarks still could be built using Benchmarks target." OFF)
+-option(LLVM_INCLUDE_BENCHMARKS "Generate benchmark targets. If OFF, benchmarks can't be built." ON)
++option(LLVM_INCLUDE_BENCHMARKS "Generate benchmark targets. If OFF, benchmarks can't be built." OFF)
+ 
+ option (LLVM_BUILD_DOCS "Build the llvm documentation." OFF)
+ option (LLVM_INCLUDE_DOCS "Generate build targets for llvm documentation." ON)
