@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2018, 2022, Oracle and/or its affiliates.
+# Copyright (c) 2018, 2023, Oracle and/or its affiliates.
 #
 
 BUILD_BITS =	64
@@ -30,12 +30,12 @@ include ../../../make-rules/shared-macros.mk
 GCC_ROOT =      /usr/gcc/12
 
 COMPONENT_NAME =	rustc
-COMPONENT_VERSION =	1.66.0
+COMPONENT_VERSION =	1.67.1
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_PROJECT_URL =	http://www.rust-lang.org/
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:0dc176e34fae9871f855a6ba4cb30fa19d69c5b4428d29281a07419c4950715c
+    sha256:77e0615011f887d9533d5374bf9c15c590c3caf32bbb035b392d1c2ae502a682
 COMPONENT_ARCHIVE_URL =	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL =	$(COMPONENT_ARCHIVE_URL).asc
 

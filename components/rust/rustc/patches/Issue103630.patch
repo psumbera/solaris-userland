@@ -1,33 +1,40 @@
-Reverts (partly) https://github.com/rust-lang/rust/commit/5a30316fc14ab6952ce9f925478c498c804a7b71
-See: https://github.com/rust-lang/rust/issues/103630
+https://github.com/rust-lang/rust/issues/103630
+https://github.com/rust-lang/rust/pull/108607
 
---- rustc-1.64.0-src/src/bootstrap/Cargo.lock.orig	2022-10-27 16:30:09.943617050 +0200
-+++ rustc-1.64.0-src/src/bootstrap/Cargo.lock	2022-10-27 16:31:08.992499840 +0200
-@@ -47,7 +47,6 @@
- dependencies = [
-  "cc",
-  "cmake",
-- "fd-lock",
-  "filetime",
-  "getopts",
-  "hex",
---- rustc-1.64.0-src/src/bootstrap/Cargo.toml.orig	2022-10-27 16:32:32.393787870 +0200
-+++ rustc-1.64.0-src/src/bootstrap/Cargo.toml	2022-10-27 16:33:41.864929440 +0200
-@@ -36,7 +36,6 @@
+diff --git a/src/bootstrap/Cargo.toml b/src/bootstrap/Cargo.toml
+index ccc7ec1fce9..4b8b949cee9 100644
+--- a/src/bootstrap/Cargo.toml
++++ b/src/bootstrap/Cargo.toml
+@@ -36,7 +36,6 @@ test = false
  
  [dependencies]
  cmake = "0.1.38"
--fd-lock = "3.0.6"
+-fd-lock = "3.0.8"
  filetime = "0.2"
- num_cpus = "1.0"
  getopts = "0.2.19"
---- rustc-1.64.0-src/src/bootstrap/bin/main.rs.~1~	2022-09-19 16:07:21.000000000 +0200
-+++ rustc-1.64.0-src/src/bootstrap/bin/main.rs	2022-10-27 16:51:22.919858790 +0200
-@@ -7,27 +7,13 @@
+ cc = "1.0.69"
+@@ -57,6 +56,10 @@ walkdir = "2"
+ # Dependencies needed by the build-metrics feature
+ sysinfo = { version = "0.26.0", optional = true }
+ 
++# Solaris doesn't support flock() and thus fd-lock is not option now
++[target.'cfg(not(target_os = "solaris"))'.dependencies]
++fd-lock = "3.0.8"
++
+ [target.'cfg(windows)'.dependencies.winapi]
+ version = "0.3"
+ features = [
+diff --git a/src/bootstrap/bin/main.rs b/src/bootstrap/bin/main.rs
+index be69f819c64..49c7accae75 100644
+--- a/src/bootstrap/bin/main.rs
++++ b/src/bootstrap/bin/main.rs
+@@ -7,15 +7,18 @@
  
  use std::env;
  
 -use bootstrap::{t, Build, Config, Subcommand, VERSION};
++#[cfg(all(any(unix, windows), not(target_os = "solaris")))]
++use bootstrap::t;
 +use bootstrap::{Build, Config, Subcommand, VERSION};
  
  fn main() {
@@ -37,18 +44,21 @@ See: https://github.com/rust-lang/rust/issues/103630
 -    let mut build_lock;
 -    let _build_lock_guard;
 -    if cfg!(any(unix, windows)) {
--        build_lock = fd_lock::RwLock::new(t!(std::fs::File::create(config.out.join("lock"))));
--        _build_lock_guard = match build_lock.try_write() {
--            Ok(lock) => lock,
--            err => {
--                println!("warning: build directory locked, waiting for lock");
--                drop(err);
--                t!(build_lock.write())
--            }
--        };
++    #[cfg(all(any(unix, windows), not(target_os = "solaris")))]
++    {
++        let mut build_lock;
++        let _build_lock_guard;
+         build_lock = fd_lock::RwLock::new(t!(std::fs::File::create(config.out.join("lock"))));
+         _build_lock_guard = match build_lock.try_write() {
+             Ok(lock) => lock,
+@@ -25,9 +28,9 @@ fn main() {
+                 t!(build_lock.write())
+             }
+         };
 -    } else {
 -        println!("warning: file locking not supported for target, not locking build directory");
--    }
+     }
++    #[cfg(any(not(any(unix, windows)), target_os = "solaris"))]
 +    println!("warning: file locking not supported for target, not locking build directory");
  
      // check_version warnings are not printed during setup
