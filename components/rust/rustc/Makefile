@@ -30,12 +30,12 @@ include ../../../make-rules/shared-macros.mk
 GCC_ROOT =      /usr/gcc/12
 
 COMPONENT_NAME =	rustc
-COMPONENT_VERSION =	1.67.1
+COMPONENT_VERSION =	1.68.0
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_PROJECT_URL =	http://www.rust-lang.org/
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:77e0615011f887d9533d5374bf9c15c590c3caf32bbb035b392d1c2ae502a682
+    sha256:8651245e8708f11d0f65ba9fdb394c4b9300d603d318045664b371729da9eac4
 COMPONENT_ARCHIVE_URL =	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL =	$(COMPONENT_ARCHIVE_URL).asc
 
@@ -63,7 +63,7 @@ include $(WS_MAKE_RULES)/common.mk
 $(SOURCE_DIR_crates)/.patched: PATCH_LEVEL=0
 
 # Everything expects GNU utilities, so make sure those are preferred.
-PATH = $(COMPONENT_DIR)/epoll:$(PATH_CARGO_VENDOR):$(PATH_RUST):/usr/gnu/bin:/usr/bin
+PATH = $(PATH_RUST):/usr/gnu/bin:/usr/bin
 
 # LD_B_DIRECT breaks the build.
 LD_B_DIRECT =
@@ -78,16 +78,6 @@ CONFIGURE_OPTIONS +=	--enable-local-rust
 #CONFIGURE_OPTIONS +=	--llvm-root=/usr
 
 COMPONENT_PRE_BUILD_ACTION = $(VENDORED_SOURCES_ENFORCE)
-
-COMPONENT_PRE_CONFIGURE_ACTION += \
-       ( cd $(COMPONENT_DIR)/epoll; \
-       $(GCC_ROOT)/bin/gcc -shared -DDEBUG=0 -o libepoll.so -fPIC -c epoll.c ; \
-       echo "\#!/bin/sh" > gcc ; \
-       echo "$(GCC_ROOT)/bin/gcc -L$(COMPONENT_DIR)/epoll -lepoll \$$@" >> gcc ; \
-       chmod a+x gcc ) ;
-
-CLEAN_PATHS += epoll/libepoll.so
-CLEAN_PATHS += epoll/gcc
 
 # Put the bits cargo downloads in a private directory.  This could be cached
 # somewhere more permanent, but it's important to make sure that a person's
