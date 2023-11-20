@@ -4,16 +4,16 @@ Part of Solaris distribution configuration.
 
 --- a/config.example.toml
 +++ b/config.example.toml
-@@ -290,7 +290,7 @@
- # which are used to install Rust and Cargo together. This is disabled by
- # default. The `tools` option (immediately below) specifies which tools should
- # be built if `extended = true`.
+@@ -299,7 +299,7 @@
+ # which tools should be built if `extended = true`.
+ #
+ # This is disabled by default.
 -#extended = false
-+extended = true
++extended = false
  
  # Set of tools to be included in the installation.
  #
-@@ -310,6 +310,7 @@
+@@ -319,6 +319,7 @@
  #    "src",
  #    "rust-demangler",  # if profiler = true
  #]
