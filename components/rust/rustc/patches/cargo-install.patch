@@ -9,7 +9,7 @@ Part of Solaris distribution configuration.
  #
  # This is disabled by default.
 -#extended = false
-+extended = false
++extended = true
  
  # Set of tools to be included in the installation.
  #
