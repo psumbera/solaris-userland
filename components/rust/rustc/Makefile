@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2018, 2023, Oracle and/or its affiliates.
+# Copyright (c) 2018, 2024, Oracle and/or its affiliates.
 #
 
 BUILD_BITS =	64
@@ -30,12 +30,12 @@ include ../../../make-rules/shared-macros.mk
 GCC_ROOT =      /usr/gcc/12
 
 COMPONENT_NAME =	rustc
-COMPONENT_VERSION =	1.77.0
+COMPONENT_VERSION =	1.78.0
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_PROJECT_URL =	http://www.rust-lang.org/
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:66126989782cbf77fa3aff121bbb108429f2d46fe19328c3de231553de711b90
+    sha256:8065824f0255faa3901db8206e6f9423f6f8c07cec28bc6f2797c6c948310ece
 COMPONENT_ARCHIVE_URL =	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL =	$(COMPONENT_ARCHIVE_URL).asc
 
@@ -76,6 +76,7 @@ CONFIGURE_OPTIONS =	--default-linker=gcc
 CONFIGURE_OPTIONS +=	--enable-local-rust
 #CONFIGURE_OPTIONS +=	--enable-llvm-link-shared
 #CONFIGURE_OPTIONS +=	--llvm-root=/usr
+CONFIGURE_OPTIONS +=    --release-channel=stable
 
 COMPONENT_PRE_BUILD_ACTION = $(VENDORED_SOURCES_ENFORCE)
 
@@ -91,14 +92,6 @@ COMPONENT_BUILD_ENV +=	OPENSSL_LIB_DIR=/usr/openssl/3/lib/64
 COMPONENT_BUILD_ENV +=	OPENSSL_INCLUDE_DIR=/usr/openssl/3/include
 COMPONENT_INSTALL_ENV += OPENSSL_LIB_DIR=/usr/openssl/3/lib/64
 COMPONENT_INSTALL_ENV += OPENSSL_INCLUDE_DIR=/usr/openssl/3/include
-
-# Since version 1.70.0 there is Cargo linking problem where
-# -L/usr/lib/$(MACH64) is placed before -L/usr/openssl/3/lib.
-# Following workaround can be removed once old OpenSSL 1 is removed.
-COMPONENT_PRE_BUILD_ACTION += ( \
-	cd $(@D) ; mkdir -p pkgconfig-my ; \
-	gsed 's;-L$${libdir} -L$${sharedlibdir} ;;' /usr/lib/64/pkgconfig/zlib.pc > pkgconfig-my/zlib.pc ) ;
-PKG_CONFIG_PATH = $(@D)/pkgconfig-my:/usr/lib/$(MACH64)/pkgconfig
 
 # Rust library names contain hash which differs between intel and sparc.
 # Therefore library list need to be created to be included into p5m file.
